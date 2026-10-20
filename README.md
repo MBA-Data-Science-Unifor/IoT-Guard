@@ -12,29 +12,31 @@ O Streamlit funciona como uma apresentação de slides. Ele exibe textos, trecho
 
 ```text
 .
-├── app.py
+├── .dockerignore             # Arquivos excluídos do contexto do Docker
+├── .gitignore                # Arquivos locais e artefatos ignorados pelo Git
+├── Dockerfile                # Imagem da aplicação
+├── docker-compose.yml        # Serviços locais da solução
+├── dvc.yaml                  # Definição do versionamento de dados e artefatos
+├── README.md                 # Documentação e roteiro da apresentação
+├── app.py                    # Entrada única do Streamlit
 ├── presentation/
-│   ├── content/              # Textos dos slides
-│   ├── snippets/             # Trechos de código exibidos
-│   ├── assets/               # Imagens e elementos visuais
-│   └── components/           # Navegação e componentes do Streamlit
+│   ├── content/              # Textos e narrativa dos slides
+│   ├── snippets/             # Trechos de código selecionados para exibição
+│   ├── assets/               # Imagens, ícones e elementos visuais
+│   └── components/           # Navegação, tema e componentes do Streamlit
 ├── artifacts/
-│   ├── presentation/         # Resultados usados pelos slides
-│   │   ├── eda/
-│   │   ├── benchmark/
-│   │   ├── metrics/
-│   │   └── figures/
-│   ├── notebooks/            # Notebooks preservados como artefatos
-│   └── model/                # Pipeline, schema e metadados do modelo
+│   ├── presentation/         # Resultados consumidos pela apresentação
+│   │   ├── eda/               # Gráficos e resumos da análise exploratória
+│   │   ├── benchmark/         # Comparação entre os modelos avaliados
+│   │   ├── metrics/            # Métricas finais de desempenho
+│   │   └── figures/            # Figuras, matrizes e visualizações exportadas
+│   ├── notebooks/             # Notebooks preservados como documentação técnica
+│   └── model/                 # Pipeline, schema, labels e metadados do modelo
 ├── src/
-│   └── iotguard/             # Código técnico de suporte
+│   └── iotguard/              # Código técnico de suporte ao projeto
 ├── services/
-│   └── api.py                # API para testes de inferência
-├── tests/
-├── dvc.yaml
-├── Dockerfile
-├── docker-compose.yml
-└── README.md
+│   └── api.py                 # API para testes de inferência
+└── tests/                     # Testes automatizados dos componentes técnicos
 ```
 
 Os notebooks em `artifacts/notebooks/` são materiais de registro e comprovação do processo analítico. Eles não são executados pelo Streamlit; os resultados relevantes são exportados para `artifacts/presentation/`.

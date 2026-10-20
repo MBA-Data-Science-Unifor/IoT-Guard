@@ -76,6 +76,11 @@ artifacts/
 *.pt
 *.pth
 
+# Preserva a estrutura de diretórios para os artefatos versionados pelo DVC
+!artifacts/
+!artifacts/**/
+!artifacts/**/.gitkeep
+
 # ============================================================
 # Relatórios gerados
 # ============================================================
