@@ -65,6 +65,8 @@ data/reference.parquet
 data/current.parquet
 data/*.parquet
 data/*.csv
+artifacts/model/data/*.csv
+
 
 # Modelos e artefatos versionados pelo DVC
 models/
@@ -118,3 +120,4 @@ Thumbs.db
 # Docker (arquivos temporários)
 # ============================================================
 *.pid
+
