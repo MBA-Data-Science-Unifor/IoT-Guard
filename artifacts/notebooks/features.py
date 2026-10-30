@@ -2,6 +2,12 @@ import pandas as pd
 import numpy as np
 import modulefinder
 
+def save_fig(directory, fig, name, dpi=150):
+    """Persiste na figura do repositório do EDA"""
+    path = directory / f"{name}.png"
+    fig.savefig(path, dpi=dpi, bbox_inches="tight")
+    print("saved")
+
 
 def correlation_groups(corr_matrix: pd.DataFrame, threshold=0.95) -> list[set]:
     """ 

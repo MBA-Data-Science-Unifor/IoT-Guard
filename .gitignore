@@ -67,6 +67,9 @@ data/*.parquet
 data/*.csv
 artifacts/model/data/*.csv
 artifacts/model/*.json
+artifacts/presentation/eda/*.png
+artifacts/presentation/model/*.png
+
 
 # Modelos e artefatos versionados pelo DVC
 models/
