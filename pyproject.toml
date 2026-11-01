@@ -3,15 +3,10 @@ name = "projeto-ml-iot"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
-    "joblib>=1.6.0",
-    "lightgbm>=4.7.0",
-    "pandas>=3.0.6",
+    "markdown-it-py>=4.2.0",
     "plotly>=7.1.0",
-    "python-dotenv>=1.2.4",
-    "scikit-learn>=1.9.1",
-    "pyyaml>=6.0.3",
-    "xgboost>=3.4.1",
-    "dash>=4.5.0",
+    "polars>=2.1.0",
+    "streamlit>=1.66.1",
 ]
 
 [dependency-groups]
@@ -19,8 +14,13 @@ analysis = [
     "imbalanced-learn>=0.14.2",
     "ipykernel>=7.4.0",
     "ipywidgets>=8.1.9",
+    "joblib>=1.6.0",
+    "lightgbm>=4.7.0",
     "matplotlib>=3.11.2",
     "numpy>=2.5.4",
+    "pandas>=3.0.6",
+    "python-dotenv>=1.2.4",
+    "pyyaml>=6.0.3",
     "scikit-learn>=1.9.1",
     "seaborn>=0.13.2",
     "ucimlrepo>=0.0.7",
@@ -36,7 +36,6 @@ dev = [
     "pytest>=9.1.1",
 ]
 mlops = [
-    "dvc>=3.67.1",
     "evidently>=0.4.36",
     "mlflow>=3.17.2",
     "prometheus-client>=0.26.0",

@@ -1,76 +1,59 @@
 # IoT Guard
 
-Projeto de detecção de intrusão em redes IoT com aprendizado de máquina supervisionado.
+Apresentação Streamlit do estudo de detecção de intrusão na base RT-IoT2022. O app lê artefatos já produzidos pelos notebooks; a navegação não executa o pipeline de treino.
 
-## Estrutura
+## Executar
 
-```text
-.
-├── app.py                         # Aplicação principal Dash
-├── dashboard_data.py              # Leitura/cache dos artefatos
-├── dashboard_components.py        # Componentes visuais reutilizáveis
-├── notebook_reference.py          # Trechos dos notebooks para referência
-├── pages/                         # Páginas Dash
-├── assets/styles.css              # Identidade visual
-├── scripts/build_model_artifacts.py
-├── artifacts/notebooks/           # Notebooks metodológicos
-└── artifacts/presentation/model/  # Resultados consumidos pelo Dash
-```
-
-## Artefatos utilizados
-
-A apresentação lê os arquivos produzidos pelo pipeline analítico:
-
-- `X_train.csv` e `X_test.csv`;
-- `y_train.csv` e `y_test.csv`;
-- `target_mapping.csv`;
-- resultados materializados em `artifacts/presentation/model/`.
-
-Os dados atualmente estão em `artifacts/notebooks/artifacts/model/data/`, e o
-carregador também reconhece `artifacts/model/data/` quando esse diretório for
-preenchido pelo DVC ou pelos notebooks.
-
-## Execução
-
-Sincronize as dependências:
+Requer Python 3.12 ou superior. Na raiz do projeto:
 
 ```bash
-uv sync
+uv sync --no-dev
+uv run --no-dev streamlit run app.py
 ```
 
-Gere ou atualize os resultados dos três modelos:
+O app tem quatro páginas: Visão Geral, EDA, Pré-processamento e Modelos. A apresentação lê CSVs e monta tabelas com Polars. O Streamlit ainda instala pandas como dependência transitiva, mas o código da apresentação não o importa.
+
+Para executar os notebooks, instale também o grupo de análise: `uv sync --group analysis`. Para atualizar dependências, execute `uv lock` e regenere os arquivos `requirements*.txt` com `uv export`, usando os mesmos grupos indicados no cabeçalho de cada arquivo.
+
+## Pipeline atual
+
+Execute os notebooks em `artifacts/notebooks/` nesta ordem, a partir da raiz do projeto:
+
+1. `01_EDA_merged.ipynb`: carrega 123.117 fluxos, analisa qualidade, distribuição, leakage e relevância; exporta 80 features codificadas e o mapeamento das 12 classes.
+2. `02_Preprocessing_merged.ipynb`: faz split estratificado 80/20; ajusta `RobustScaler` apenas no treino; reduz DoS de 75.727 para 10.000 e aplica SMOTE a quatro classes raras até 500. Exporta 34.085 linhas de treino e 24.624 de teste.
+3. `03_Model_merged.ipynb`: faz busca com validação cruzada para LightGBM, HistGradientBoosting e RandomForest; avalia o teste completo com F1, Kappa, MCC e Log-Loss, além do recorte de vetores inéditos e curvas de limiar para alerta binário; salva o campeão e os modelos individuais.
+
+O pipeline atual mantém duplicadas e as 80 features. `log1p` e correlação são usados no EDA, mas não são transformações do treino. O notebook 03 só reutiliza o cache do benchmark quando os hashes dos dados e metadados de entrada coincidem.
+
+## Resultado verificado
+
+| Modelo | F1 macro no teste | F1 macro na CV |
+|---|---:|---:|
+| RandomForest | 0,9557 | 0,9844 |
+| HistGradientBoosting | 0,9545 | 0,9822 |
+| LightGBM | 0,9508 | 0,9844 |
+| Baseline sempre DoS | 0,0724 | — |
+
+O campeão atual é RandomForest. No recorte de 3.576 fluxos cujo vetor não aparece no treino, seu F1 macro é 0,7935. Esse recorte cobre 14,5% do teste e evidencia o efeito das repetições na métrica global. As classes Brute force SSH e Nmap FIN têm apenas 7 e 6 exemplos no teste.
+
+## Artefatos usados
+
+- `artifacts/data/rt_iot2022/RT_IOT2022.csv`: dados brutos.
+- `artifacts/model/data/`: dataset codificado, splits, `metadata.json`, `target_mapping.csv` e modelos produzidos pelos notebooks.
+- `artifacts/presentation/model/benchmark_models.joblib`: buscas e fingerprint dos arquivos de entrada.
+- `artifacts/presentation/model/threshold_metrics.csv` e `limiares_modelos.png`: saídas do notebook de modelagem, não exibidas na apresentação.
+- `artifacts/presentation/model/mlops/runs/`: histórico gerado pelo notebook, fora da navegação Streamlit.
+- `artifacts/presentation/eda/` e `artifacts/presentation/model/`: gráficos exportados.
+
+Artefatos de benchmark antigos, quando presentes, não alimentam o app atual e não devem ser combinados com as métricas acima.
+
+A Visão Geral apresenta o problema e a equipe. A EDA reúne dicionário de dados, distribuição, estatísticas, valores extremos e limites da base; o Pré-processamento mostra limpeza, codificação, transformações e as 80 features finais; Modelos compara o benchmark, métricas complementares e a queda de F1 nos fluxos inéditos. Os gráficos da página Modelos ficam lado a lado em telas largas e se empilham em telas estreitas.
+
+## Verificação
 
 ```bash
-python scripts/build_model_artifacts.py
+uv run --group dev python -m compileall -q app.py pages utils tests
+uv run --group dev pytest tests/test_streamlit_pages.py -q -p no:cacheprovider
 ```
 
-Inicie a apresentação:
-
-```bash
-python app.py
-```
-
-Acesse <http://127.0.0.1:8050>.
-
-## Páginas da apresentação
-
-- **Visão geral**: contexto, objetivo e dimensão dos artefatos.
-- **Dados e preparo**: classes, mapeamento do alvo e explicação do pipeline.
-- **Análise exploratória**: distribuições, correlações e estatísticas descritivas.
-- **Modelos e métricas**: benchmark, F1-Macro, matrizes e importâncias.
-- **Metodologia**: trechos dos notebooks como referência, sem execução dentro do Dash.
-- **Conclusão**: interpretação crítica, custos dos erros e próximos passos.
-
-As fórmulas de classificação e F1-Macro são renderizadas em LaTeX pela própria
-interface Dash.
-
-## Notebooks
-
-Os notebooks continuam sendo a referência técnica do pipeline:
-
-1. `01_EDA.ipynb`: exploração e codificação inicial.
-2. `02_Preprocessing.ipynb`: limpeza, escala, balanceamento e divisão dos dados.
-3. `03_Model.ipynb`: otimização e avaliação do LightGBM.
-
-A página de metodologia exibe trechos desses arquivos sem substituir os
-artefatos nem executar notebooks durante a navegação.
+Os testes automatizados verificam a abertura das quatro páginas, a compilação dos notebooks, a consistência dos artefatos e os componentes HTML.

@@ -1,0 +1,27 @@
+{
+  "dataset": "RT-IoT2022",
+  "target": "Attack_type",
+  "random_state": 42,
+  "n_train_original": 98493,
+  "n_test": 24624,
+  "n_train_balanced": 34085,
+  "n_features_in": 80,
+  "n_features_final": 80,
+  "dos_cap": 10000,
+  "smote_target": 500,
+  "classes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "scaler": "RobustScaler"
+}

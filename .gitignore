@@ -50,15 +50,7 @@ mlflow.db
 mlflow-artifacts/
 mlartifacts/
 
-# ============================================================
-# DVC
-# ============================================================
-.dvc/cache/
-.dvc/tmp/
-.dvc/plots/
-.dvc/config.local
-
-# Arquivos de dados versionados pelo DVC (gerados pelo pipeline)
+# Arquivos de dados gerados pelo pipeline
 data/processed/
 data/synthetic/
 data/reference.parquet
@@ -114,7 +106,3 @@ Thumbs.db
 *.swp
 *.swo
 
-# ============================================================
-# Docker (arquivos temporários)
-# ============================================================
-*.pid
